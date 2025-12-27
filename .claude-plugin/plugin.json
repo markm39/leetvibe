@@ -1,0 +1,16 @@
+{
+  "name": "leetvibe",
+  "description": "Generate LeetCode-style coding quizzes when new programming concepts appear in your code. Practice algorithms, data structures, and patterns while you vibe code.",
+  "version": "0.1.0",
+  "author": {
+    "name": "LeetVibe"
+  },
+  "license": "MIT",
+  "keywords": [
+    "learning",
+    "leetcode",
+    "algorithms",
+    "practice",
+    "quiz"
+  ]
+}

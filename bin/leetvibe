@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# LeetVibe CLI - Submit quiz solutions from terminal
+#
+# Usage:
+#   leetvibe submit 002          # Submit quiz 002
+#   leetvibe submit ./sol.py     # Submit specific file
+#   leetvibe list                # List available quizzes
+#   leetvibe stats               # Show learning stats
+#
+# Installation:
+#   Add to your shell config (.bashrc, .zshrc):
+#   export PATH="$PATH:/path/to/leetvibe/bin"
+#
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+case "${1:-help}" in
+    submit|s)
+        shift
+        python3 "$SCRIPT_DIR/scripts/check_solution.py" "$@"
+        ;;
+    list|ls)
+        echo ""
+        echo "  LeetVibe Quizzes"
+        echo "  ================"
+        echo ""
+        if [ -d ".leetvibe/solutions" ]; then
+            for f in .leetvibe/solutions/*; do
+                if [ -f "$f" ]; then
+                    filename=$(basename "$f")
+                    id="${filename%%-*}"
+                    concept="${filename#*-}"
+                    concept="${concept%.*}"
+                    echo "  [$id] ${concept//_/ }"
+                fi
+            done
+            echo ""
+        else
+            echo "  No quizzes found. Start coding with Claude!"
+            echo ""
+        fi
+        ;;
+    stats)
+        HISTORY="$HOME/.leetvibe/learning-history.json"
+        if [ -f "$HISTORY" ]; then
+            echo ""
+            echo "  LeetVibe Stats"
+            echo "  =============="
+            echo ""
+            python3 -c "
+import json
+with open('$HISTORY') as f:
+    h = json.load(f)
+concepts = h.get('concepts', {})
+total = len(concepts)
+done = sum(1 for c in concepts.values() if c.get('quiz_completed'))
+print(f'  Concepts seen:     {total}')
+print(f'  Quizzes completed: {done}')
+if total > 0:
+    print(f'  Progress:          {done}/{total} ({100*done//total}%)')
+print()
+if done > 0:
+    print('  Completed:')
+    for name, data in concepts.items():
+        if data.get('quiz_completed'):
+            score = data.get('quiz_score', 0)
+            print(f'    - {name.replace(\"_\", \" \")}: {score:.0%}')
+    print()
+"
+        else
+            echo ""
+            echo "  No learning history yet. Start coding with Claude!"
+            echo ""
+        fi
+        ;;
+    help|--help|-h|*)
+        echo ""
+        echo "  LeetVibe - Learn while you vibe code"
+        echo ""
+        echo "  Usage:"
+        echo "    leetvibe submit <id>    Submit and test a quiz solution"
+        echo "    leetvibe list           List available quizzes"
+        echo "    leetvibe stats          Show learning progress"
+        echo ""
+        echo "  Examples:"
+        echo "    leetvibe submit 002"
+        echo "    leetvibe submit .leetvibe/solutions/002-memoization.ts"
+        echo ""
+        ;;
+esac

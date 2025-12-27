@@ -1,0 +1,41 @@
+{
+  "name": "leetvibe",
+  "version": "0.1.0",
+  "description": "Learn while you vibe code - Auto-generates LeetCode-style quizzes when Claude uses new programming concepts",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "leetcode",
+    "learning",
+    "algorithms",
+    "coding-practice"
+  ],
+  "author": "markm39",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markm39/leetvibe"
+  },
+  "homepage": "https://github.com/markm39/leetvibe#readme",
+  "bugs": {
+    "url": "https://github.com/markm39/leetvibe/issues"
+  },
+  "bin": {
+    "leetvibe": "./bin/leetvibe"
+  },
+  "files": [
+    "bin/",
+    "commands/",
+    "hooks/",
+    "scripts/",
+    "skills/",
+    ".claude-plugin/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ]
+}
