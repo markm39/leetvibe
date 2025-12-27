@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "leetvibe",
-      "source": ".",
+      "source": "./",
       "description": "Auto-generates LeetCode-style quizzes when Claude uses new programming concepts. Detects algorithms, data structures, and patterns - creates practice problems you can solve in your IDE.",
       "version": "0.1.0",
       "author": {
