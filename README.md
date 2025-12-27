@@ -28,30 +28,37 @@ All tests passed!
 
 ## Installation
 
-### Quick Install
+### Recommended: Claude Code Marketplace
+
+```bash
+# In Claude Code, run:
+/plugin marketplace add markm39/leetvibe
+/plugin install leetvibe
+```
+
+That's it! LeetVibe is now active in all your Claude Code sessions.
+
+### Alternative: Manual Install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/markm39/leetvibe/main/install.sh | bash
 ```
 
-### Manual Install
-
+Then start Claude with:
 ```bash
-git clone https://github.com/markm39/leetvibe.git ~/.leetvibe-plugin
-chmod +x ~/.leetvibe-plugin/bin/leetvibe
-export PATH="$PATH:$HOME/.leetvibe-plugin/bin"
+leetvibe-claude
+# or: claude --plugin-dir ~/.leetvibe-plugin
 ```
 
 ## Usage
 
-### 1. Start Claude with LeetVibe
+### 1. Start Using Claude
 
+If you installed via marketplace, just use Claude normally - LeetVibe is already active.
+
+If you installed manually:
 ```bash
-# If you used the installer:
 leetvibe-claude
-
-# Or manually:
-claude --plugin-dir ~/.leetvibe-plugin
 ```
 
 ### 2. Code Normally

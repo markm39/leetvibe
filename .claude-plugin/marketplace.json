@@ -1,0 +1,34 @@
+{
+  "name": "leetvibe",
+  "owner": {
+    "name": "markm39",
+    "email": "markmiller0470@gmail.com"
+  },
+  "metadata": {
+    "description": "Learn while you vibe code - Auto-generates LeetCode-style quizzes",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "leetvibe",
+      "source": ".",
+      "description": "Auto-generates LeetCode-style quizzes when Claude uses new programming concepts. Detects algorithms, data structures, and patterns - creates practice problems you can solve in your IDE.",
+      "version": "0.1.0",
+      "author": {
+        "name": "markm39"
+      },
+      "homepage": "https://github.com/markm39/leetvibe",
+      "repository": "https://github.com/markm39/leetvibe",
+      "license": "MIT",
+      "keywords": [
+        "learning",
+        "leetcode",
+        "algorithms",
+        "practice",
+        "quiz",
+        "education"
+      ],
+      "category": "education"
+    }
+  ]
+}
