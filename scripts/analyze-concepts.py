@@ -168,28 +168,42 @@ def get_next_quiz_id(leetvibe_dir: Path) -> str:
     return f"{max_id + 1:03d}"
 
 
-def generate_quiz_background(concept: str, quiz_id: str, source_file: str) -> None:
-    """Spawn background process to generate quiz solution file."""
-    script_dir = Path(__file__).parent
-    generate_script = script_dir / 'generate_quiz.py'
+def get_language_from_file(file_path: str) -> str:
+    """Determine language from file extension."""
+    ext = Path(file_path).suffix.lower()
+    ext_to_lang = {
+        '.py': 'python',
+        '.ts': 'typescript', '.tsx': 'typescript',
+        '.js': 'javascript', '.jsx': 'javascript',
+        '.cpp': 'cpp', '.cc': 'cpp', '.cxx': 'cpp',
+        '.swift': 'swift',
+        '.kt': 'kotlin', '.kts': 'kotlin',
+    }
+    return ext_to_lang.get(ext, 'python')
 
-    # Spawn in background using subprocess
-    cmd = [
-        sys.executable,
-        str(generate_script),
-        concept,
-        quiz_id,
-        '--source-file', source_file,
-    ]
 
-    # Run in background (don't wait for completion)
-    subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        start_new_session=True,
-        cwd=os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd())
-    )
+def write_pending_request(concept: str, quiz_id: str, source_file: str, source_code: str) -> Path:
+    """Write a pending quiz request for Claude Code to process."""
+    leetvibe_dir = get_leetvibe_dir()
+    pending_dir = leetvibe_dir / 'pending'
+    pending_dir.mkdir(parents=True, exist_ok=True)
+
+    language = get_language_from_file(source_file)
+
+    request = {
+        "concept": concept,
+        "quiz_id": quiz_id,
+        "source_file": source_file,
+        "source_code": source_code[:3000],  # Limit size
+        "language": language,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+    pending_file = pending_dir / f"{quiz_id}-{concept}.json"
+    with open(pending_file, 'w') as f:
+        json.dump(request, f, indent=2)
+
+    return pending_file
 
 
 def main():
@@ -266,15 +280,23 @@ def main():
     # Save updated history BEFORE spawning background processes
     save_learning_history(history)
 
-    # Now spawn background quiz generation with pre-assigned IDs
-    for concept, quiz_id in quiz_assignments:
-        generate_quiz_background(concept, quiz_id, file_path)
-        print(f"[LeetVibe] New concept: {concept}")
-        print(f"[LeetVibe] Generating quiz -> .leetvibe/solutions/{quiz_id}-{concept}.*")
+    # Read source code for context
+    source_code = ""
+    try:
+        with open(file_path, 'r') as f:
+            source_code = f.read()
+    except IOError:
+        source_code = content  # Fall back to edit content
 
+    # Write pending quiz requests for Claude Code to process
+    for concept, quiz_id in quiz_assignments:
+        write_pending_request(concept, quiz_id, file_path, source_code)
+
+    # Output instruction for Claude Code to auto-generate quizzes in background
     if new_concepts:
-        print(f"[LeetVibe] {len(new_concepts)} quiz(es) generating in background...")
-        print(f"[LeetVibe] Open solution files when ready, then /leetvibe:submit <id>")
+        concepts_list = ", ".join(new_concepts)
+        print(f"[LeetVibe] New concepts detected: {concepts_list}")
+        print(f"[LeetVibe:AutoGenerate] Generate quizzes for pending requests in .leetvibe/pending/")
 
 
 if __name__ == '__main__':
